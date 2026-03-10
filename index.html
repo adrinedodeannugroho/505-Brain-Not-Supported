@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TechGroup — Futuristic Portfolio</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --neon-cyan: #00f5ff;
+      --neon-purple: #bf00ff;
+      --neon-green: #39ff14;
+      --dark-bg: #020b18;
+      --dark-card: #060f1e;
+      --border-glow: rgba(0,245,255,0.3);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { background:var(--dark-bg); color:#e0f7fa; font-family:'Rajdhani',sans-serif; overflow-x:hidden; }
+
+    #bg-canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+
+    /* NAVBAR */
+    .navbar-custom { background:rgba(2,11,24,0.88); backdrop-filter:blur(14px); border-bottom:1px solid var(--border-glow); z-index:1000; }
+    .navbar-brand { font-family:'Orbitron',monospace; font-weight:900; font-size:1.3rem; color:var(--neon-cyan)!important; text-shadow:0 0 12px var(--neon-cyan); letter-spacing:3px; }
+    .nav-link-custom { color:#a0c4d8!important; font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.95rem; letter-spacing:1px; transition:all .3s; position:relative; padding:.5rem 1rem!important; }
+    .nav-link-custom::after { content:''; position:absolute; bottom:0; left:50%; width:0; height:2px; background:var(--neon-cyan); box-shadow:0 0 8px var(--neon-cyan); transition:all .3s; transform:translateX(-50%); }
+    .nav-link-custom:hover { color:var(--neon-cyan)!important; }
+    .nav-link-custom:hover::after { width:80%; }
+
+    /* HERO */
+    #home { position:relative; min-height:100vh; display:flex; align-items:center; justify-content:center; z-index:1; }
+    .hero-content { text-align:center; padding:2rem; }
+    .hero-badge { display:inline-block; background:rgba(0,245,255,0.07); border:1px solid var(--neon-cyan); color:var(--neon-cyan); font-family:'Orbitron',monospace; font-size:.72rem; letter-spacing:4px; padding:6px 22px; margin-bottom:1.5rem; animation:pulse-badge 2.2s ease-in-out infinite; }
+    @keyframes pulse-badge { 0%,100%{box-shadow:0 0 6px var(--neon-cyan)} 50%{box-shadow:0 0 22px var(--neon-cyan),0 0 40px rgba(0,245,255,.3)} }
+    .hero-title { font-family:'Orbitron',monospace; font-size:clamp(2.4rem,7vw,5.5rem); font-weight:900; line-height:1.1; margin-bottom:1.2rem; }
+    .text-glow-cyan { color:var(--neon-cyan); text-shadow:0 0 20px var(--neon-cyan),0 0 40px rgba(0,245,255,.4); }
+    .text-glow-purple { color:var(--neon-purple); text-shadow:0 0 20px var(--neon-purple),0 0 40px rgba(191,0,255,.4); }
+    .hero-subtitle { font-size:clamp(.95rem,2.5vw,1.25rem); color:#7eb8cc; max-width:680px; margin:0 auto 2.5rem; line-height:1.8; }
+    .btn-cyber { background:transparent; border:2px solid var(--neon-cyan); color:var(--neon-cyan); font-family:'Orbitron',monospace; font-size:.8rem; letter-spacing:2px; padding:12px 30px; text-decoration:none; transition:all .3s; position:relative; overflow:hidden; display:inline-block; }
+    .btn-cyber::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(0,245,255,.15),transparent); transition:left .4s; }
+    .btn-cyber:hover::before { left:100%; }
+    .btn-cyber:hover { background:rgba(0,245,255,.1); box-shadow:0 0 28px rgba(0,245,255,.5); color:var(--neon-cyan); }
+    .btn-cyber-purple { border-color:var(--neon-purple); color:var(--neon-purple); }
+    .btn-cyber-purple::before { background:linear-gradient(90deg,transparent,rgba(191,0,255,.15),transparent); }
+    .btn-cyber-purple:hover { background:rgba(191,0,255,.1); box-shadow:0 0 28px rgba(191,0,255,.5); color:var(--neon-purple); }
+
+    /* GLITCH */
+    .glitch { position:relative; display:inline-block; }
+    .glitch::before,.glitch::after { content:attr(data-text); position:absolute; top:0; left:0; width:100%; height:100%; font-family:'Orbitron',monospace; font-size:inherit; font-weight:inherit; }
+    .glitch::before { color:var(--neon-purple); animation:g1 4s infinite; clip-path:polygon(0 0,100% 0,100% 38%,0 38%); }
+    .glitch::after { color:var(--neon-green); animation:g2 4s infinite; clip-path:polygon(0 62%,100% 62%,100% 100%,0 100%); }
+    @keyframes g1 { 0%,88%,100%{transform:translate(0);opacity:0} 90%{transform:translate(-4px,1px);opacity:.8} 93%{transform:translate(4px,-1px);opacity:.8} 96%{transform:translate(-2px,2px);opacity:0} }
+    @keyframes g2 { 0%,88%,100%{transform:translate(0);opacity:0} 91%{transform:translate(4px,-1px);opacity:.8} 94%{transform:translate(-4px,1px);opacity:.8} 97%{transform:translate(2px,-2px);opacity:0} }
+
+    /* STATS */
+    .stats-bar { position:relative; z-index:1; background:rgba(6,15,30,.85); border-top:1px solid var(--border-glow); border-bottom:1px solid var(--border-glow); padding:2rem 0; }
+    .stat-number { font-family:'Orbitron',monospace; font-size:2.4rem; font-weight:900; color:var(--neon-cyan); text-shadow:0 0 14px var(--neon-cyan); display:block; }
+    .stat-label { font-size:.8rem; color:#4a7a8e; letter-spacing:2px; text-transform:uppercase; }
+
+    /* SECTIONS */
+    section { position:relative; z-index:1; }
+    .section-sub { color:#4a7a8e; font-size:.85rem; letter-spacing:3px; text-transform:uppercase; margin-bottom:.5rem; }
+    .section-heading { font-family:'Orbitron',monospace; font-weight:700; font-size:clamp(1.5rem,4vw,2.4rem); color:#e0f7fa; }
+    .divider-line { width:80px; height:3px; background:linear-gradient(90deg,var(--neon-cyan),var(--neon-purple)); margin:1rem auto 3rem; box-shadow:0 0 10px var(--neon-cyan); }
+
+    /* ABOUT */
+    #about { padding:100px 0; }
+    .about-card { background:rgba(6,15,30,.92); border:1px solid rgba(0,245,255,.14); padding:2.5rem; position:relative; overflow:hidden; transition:border-color .3s; }
+    .about-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:linear-gradient(180deg,var(--neon-cyan),var(--neon-purple)); }
+    .about-card:hover { border-color:rgba(0,245,255,.4); }
+    .tech-badge { background:rgba(0,245,255,.05); border:1px solid rgba(0,245,255,.28); color:var(--neon-cyan); font-family:'Orbitron',monospace; font-size:.68rem; letter-spacing:1px; padding:4px 13px; transition:all .3s; display:inline-block; }
+    .tech-badge:hover { background:rgba(0,245,255,.15); box-shadow:0 0 12px rgba(0,245,255,.4); }
+    .tech-icon-grid { display:flex; flex-wrap:wrap; gap:10px; margin-top:1.4rem; }
+    .vision-box { background:rgba(191,0,255,.05); border:1px solid rgba(191,0,255,.2); padding:1.4rem; margin-top:1.3rem; }
+
+    /* MEMBERS */
+    #members { padding:100px 0; background:rgba(0,0,0,.18); }
+    .member-card { background:var(--dark-card); border:1px solid rgba(0,245,255,.1); padding:2rem; text-align:center; cursor:pointer; transition:all .4s; position:relative; overflow:hidden; text-decoration:none; display:block; }
+    .member-card::after { content:''; position:absolute; bottom:0; left:0; width:0; height:2px; transition:width .4s; }
+    .member-card:hover { transform:translateY(-9px); border-color:rgba(0,245,255,.38); box-shadow:0 22px 60px rgba(0,0,0,.5),0 0 30px rgba(0,245,255,.09); }
+    .member-card:hover::after { width:100%; }
+    .mc-c::after { background:#00f5ff; }
+    .mc-p::after { background:#bf00ff; }
+    .mc-g::after { background:#39ff14; }
+    .mc-o::after { background:#ff6b00; }
+    .mc-r::after { background:#ff005a; }
+    .member-avatar { width:88px; height:88px; border-radius:50%; margin:0 auto 1.2rem; display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:1.7rem; font-weight:900; border:2px solid transparent; transition:all .4s; }
+    .member-card:hover .member-avatar { box-shadow:0 0 25px currentColor; }
+    .av-1 { background:rgba(0,245,255,.1); color:#00f5ff; border-color:#00f5ff; }
+    .av-2 { background:rgba(191,0,255,.1); color:#bf00ff; border-color:#bf00ff; }
+    .av-3 { background:rgba(57,255,20,.1); color:#39ff14; border-color:#39ff14; }
+    .av-4 { background:rgba(255,107,0,.1); color:#ff6b00; border-color:#ff6b00; }
+    .av-5 { background:rgba(255,0,90,.1); color:#ff005a; border-color:#ff005a; }
+    .member-name { font-family:'Orbitron',monospace; font-size:.95rem; font-weight:700; color:#e0f7fa; margin-bottom:.3rem; }
+    .member-role { font-size:.75rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:1rem; }
+    .r-1 { color:#00f5ff; } .r-2 { color:#bf00ff; } .r-3 { color:#39ff14; } .r-4 { color:#ff6b00; } .r-5 { color:#ff005a; }
+    .skill-tag { font-size:.68rem; padding:3px 10px; letter-spacing:1px; }
+    .view-portfolio-btn { margin-top:1.4rem; font-family:'Orbitron',monospace; font-size:.62rem; letter-spacing:2px; padding:8px 18px; border:1px solid; background:transparent; transition:all .3s; display:inline-block; text-decoration:none; }
+    .vp-1{border-color:#00f5ff;color:#00f5ff;} .vp-1:hover{background:rgba(0,245,255,.1);box-shadow:0 0 15px rgba(0,245,255,.4);color:#00f5ff;}
+    .vp-2{border-color:#bf00ff;color:#bf00ff;} .vp-2:hover{background:rgba(191,0,255,.1);box-shadow:0 0 15px rgba(191,0,255,.4);color:#bf00ff;}
+    .vp-3{border-color:#39ff14;color:#39ff14;} .vp-3:hover{background:rgba(57,255,20,.1);box-shadow:0 0 15px rgba(57,255,20,.4);color:#39ff14;}
+    .vp-4{border-color:#ff6b00;color:#ff6b00;} .vp-4:hover{background:rgba(255,107,0,.1);box-shadow:0 0 15px rgba(255,107,0,.4);color:#ff6b00;}
+    .vp-5{border-color:#ff005a;color:#ff005a;} .vp-5:hover{background:rgba(255,0,90,.1);box-shadow:0 0 15px rgba(255,0,90,.4);color:#ff005a;}
+
+    /* PORTFOLIO PAGES */
+    .portfolio-page { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--dark-bg); z-index:2000; overflow-y:auto; animation:slideIn .45s ease-out; }
+    @keyframes slideIn { from{opacity:0;transform:translateX(60px)} to{opacity:1;transform:translateX(0)} }
+    .portfolio-page.active { display:block; }
+    .portfolio-header { padding:110px 0 50px; text-align:center; position:relative; }
+    .portfolio-header::after { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:180px; height:1px; background:linear-gradient(90deg,transparent,var(--neon-cyan),transparent); }
+    .back-btn { position:fixed; top:18px; left:18px; z-index:2100; background:rgba(2,11,24,.92); border:1px solid var(--neon-cyan); color:var(--neon-cyan); font-family:'Orbitron',monospace; font-size:.68rem; letter-spacing:2px; padding:10px 18px; cursor:pointer; transition:all .3s; backdrop-filter:blur(10px); }
+    .back-btn:hover { background:rgba(0,245,255,.1); box-shadow:0 0 20px rgba(0,245,255,.4); }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    .big-av { width:148px; height:148px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Orbitron',monospace; font-size:3.2rem; font-weight:900; margin:0 auto 1.5rem; animation:float 3s ease-in-out infinite; }
+    .project-card { background:rgba(6,15,30,.95); border:1px solid rgba(0,245,255,.1); padding:1.8rem; margin-bottom:1.4rem; transition:all .3s; position:relative; overflow:hidden; }
+    .project-card:hover { border-color:rgba(0,245,255,.35); transform:translateX(6px); }
+    .project-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:0; background:var(--neon-cyan); transition:height .4s; }
+    .project-card:hover::before { height:100%; }
+    .project-title { font-family:'Orbitron',monospace; font-size:.95rem; color:#e0f7fa; margin-bottom:.5rem; }
+    .skill-bar-wrap { margin:.8rem 0; }
+    .skill-bar-label { display:flex; justify-content:space-between; font-size:.8rem; color:#7eb8cc; margin-bottom:5px; }
+    .skill-bar-bg { height:6px; background:rgba(255,255,255,.05); border-radius:3px; overflow:hidden; }
+    .skill-bar-fill { height:100%; border-radius:3px; }
+
+    /* CONTACT */
+    #contact { padding:100px 0 60px; }
+    .contact-card { background:rgba(6,15,30,.92); border:1px solid rgba(0,245,255,.14); padding:3rem; text-align:center; }
+    .social-link { display:inline-flex; align-items:center; justify-content:center; width:50px; height:50px; border:1px solid rgba(0,245,255,.28); color:var(--neon-cyan); font-size:1.3rem; margin:0 7px; transition:all .3s; text-decoration:none; }
+    .social-link:hover { background:rgba(0,245,255,.1); box-shadow:0 0 20px rgba(0,245,255,.4); color:var(--neon-cyan); transform:translateY(-4px); }
+
+    footer { background:rgba(0,0,0,.4); border-top:1px solid var(--border-glow); padding:1.8rem 0; text-align:center; font-family:'Orbitron',monospace; font-size:.7rem; color:#274a5e; letter-spacing:2px; position:relative; z-index:1; }
+
+    .scanline { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px); }
+
+    .reveal { opacity:0; transform:translateY(28px); transition:all .7s ease-out; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:var(--dark-bg); }
+    ::-webkit-scrollbar-thumb { background:rgba(0,245,255,.3); border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--neon-cyan); }
+    .navbar-toggler { border-color:var(--border-glow); }
+
+    /* ══════════════════════════════════════
+       CUSTOM CURSOR — GLOW + GLITCH
+    ══════════════════════════════════════ */
+    * { cursor: none !important; }
+
+    #cursor-main {
+      position: fixed;
+      width: 14px; height: 14px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      box-shadow:
+        0 0 6px  var(--neon-cyan),
+        0 0 14px var(--neon-cyan),
+        0 0 28px var(--neon-cyan),
+        0 0 50px rgba(0,245,255,.5);
+      transition: width .12s, height .12s, background .2s, box-shadow .2s;
+      mix-blend-mode: screen;
+    }
+    #cursor-main.clicking {
+      width: 8px; height: 8px;
+      background: #fff;
+      box-shadow: 0 0 20px #fff, 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-cyan);
+    }
+    #cursor-main.on-link {
+      width: 20px; height: 20px;
+      background: transparent;
+      border: 2px solid var(--neon-cyan);
+      box-shadow: 0 0 12px var(--neon-cyan), 0 0 30px var(--neon-cyan), inset 0 0 10px rgba(0,245,255,.2);
+    }
+
+    #cursor-ring {
+      position: fixed;
+      width: 38px; height: 38px;
+      border: 1.5px solid rgba(0,245,255,.6);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      transform: translate(-50%, -50%);
+      transition: width .18s, height .18s, border-color .2s;
+      box-shadow: 0 0 8px rgba(0,245,255,.3), inset 0 0 8px rgba(0,245,255,.05);
+    }
+    #cursor-ring.on-link {
+      width: 52px; height: 52px;
+      border-color: var(--neon-purple);
+      box-shadow: 0 0 14px rgba(191,0,255,.5), inset 0 0 14px rgba(191,0,255,.05);
+    }
+
+    /* Glitch ghost cursors */
+    #cursor-glitch-r, #cursor-glitch-g {
+      position: fixed;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99997;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      mix-blend-mode: screen;
+    }
+    #cursor-glitch-r { background: var(--neon-purple); box-shadow: 0 0 10px var(--neon-purple); }
+    #cursor-glitch-g { background: var(--neon-green);  box-shadow: 0 0 10px var(--neon-green); }
+
+    /* Cursor trail sparks */
+    .cursor-spark {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99996;
+      transform: translate(-50%, -50%);
+      animation: spark-fade .55s ease-out forwards;
+    }
+    @keyframes spark-fade {
+      0%   { opacity: .9; transform: translate(-50%,-50%) scale(1); }
+      100% { opacity: 0;  transform: translate(-50%,-50%) scale(0) translateY(-14px); }
+    }
+
+    /* ══════════════════════════════════════
+       CYBER BACKGROUND ENHANCEMENTS
+    ══════════════════════════════════════ */
+
+    /* Hex grid overlay */
+    #cyber-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    /* Moving grid lines */
+    #grid-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: .55;
+    }
+
+    /* Ambient neon corner glows */
+    .corner-glow {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: .12;
+      animation: corner-pulse 6s ease-in-out infinite alternate;
+    }
+    .corner-glow.tl { top:-120px; left:-120px; width:380px; height:380px; background:var(--neon-cyan); animation-delay:0s; }
+    .corner-glow.br { bottom:-120px; right:-120px; width:420px; height:420px; background:var(--neon-purple); animation-delay:2s; }
+    .corner-glow.tr { top:-80px; right:-80px; width:280px; height:280px; background:var(--neon-green); opacity:.07; animation-delay:4s; }
+    @keyframes corner-pulse { 0%{opacity:.07} 100%{opacity:.18} }
+
+    /* Horizontal scan sweep */
+    #scan-sweep {
+      position: fixed;
+      top: -4px; left: 0;
+      width: 100%; height: 4px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      box-shadow: 0 0 12px var(--neon-cyan), 0 0 30px rgba(0,245,255,.4);
+      z-index: 1;
+      pointer-events: none;
+      animation: sweep-down 7s linear infinite;
+      opacity: .6;
+    }
+    @keyframes sweep-down { 0%{top:-4px} 100%{top:100vh} }
+
+    /* Data rain columns (Matrix-lite) */
+    #rain-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: .07;
+    }
+  </style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<!-- ── CYBER BACKGROUND LAYERS ── -->
+<div class="corner-glow tl"></div>
+<div class="corner-glow br"></div>
+<div class="corner-glow tr"></div>
+<div id="scan-sweep"></div>
+<canvas id="rain-canvas"></canvas>
+<canvas id="grid-canvas"></canvas>
+<canvas id="bg-canvas"></canvas>
+
+<!-- ── CUSTOM CURSOR ── -->
+<div id="cursor-main"></div>
+<div id="cursor-ring"></div>
+<div id="cursor-glitch-r"></div>
+<div id="cursor-glitch-g"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg fixed-top navbar-custom">
+  <div class="container">
+    <a class="navbar-brand" href="#home"><i class="bi bi-cpu me-2"></i>TECHGROUP</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto gap-1">
+        <li class="nav-item"><a class="nav-link nav-link-custom" href="#home">HOME</a></li>
+        <li class="nav-item"><a class="nav-link nav-link-custom" href="#about">ABOUT</a></li>
+        <li class="nav-item"><a class="nav-link nav-link-custom" href="#members">ANGGOTA</a></li>
+        <li class="nav-item"><a class="nav-link nav-link-custom" href="#contact">KONTAK</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ MAIN SITE ═══════════ -->
+<div id="main-site">
+
+  <!-- HERO -->
+  <section id="home">
+    <div class="hero-content">
+      <div class="hero-badge">◈ INNOVATION COLLECTIVE ◈</div>
+      <h1 class="hero-title">
+        <span class="glitch text-glow-cyan" data-text="TECHGROUP">TECHGROUP</span><br>
+        <span class="text-glow-purple">TEAM</span>
+      </h1>
+      <p class="hero-subtitle">
+        Kami adalah tim pengembang teknologi yang berdedikasi untuk menciptakan
+        solusi digital inovatif — menggabungkan kreativitas dan teknologi terkini
+        untuk masa depan yang lebih cerdas.
+      </p>
+      <a href="#members" class="btn-cyber"><i class="bi bi-people me-2"></i>MEET THE TEAM</a>
+      <a href="#about" class="btn-cyber btn-cyber-purple ms-2"><i class="bi bi-info-circle me-2"></i>TENTANG KAMI</a>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="container">
+      <div class="row g-4 text-center">
+        <div class="col-6 col-md-3"><span class="stat-number" data-count="5">0</span><span class="stat-label">Anggota</span></div>
+        <div class="col-6 col-md-3"><span class="stat-number" data-count="20">0</span><span class="stat-label">Proyek</span></div>
+        <div class="col-6 col-md-3"><span class="stat-number" data-count="15">0</span><span class="stat-label">Teknologi</span></div>
+        <div class="col-6 col-md-3"><span class="stat-number" data-count="3">0</span><span class="stat-label">Tahun Bersama</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="text-center reveal">
+        <p class="section-sub">◈ TENTANG KELOMPOK ◈</p>
+        <h2 class="section-heading">Siapa Kami?</h2>
+        <div class="divider-line"></div>
+      </div>
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-6 reveal">
+          <div class="about-card">
+            <h4 style="font-family:'Orbitron',monospace;color:var(--neon-cyan);margin-bottom:1rem;"><i class="bi bi-lightning-charge me-2"></i>Deskripsi Kelompok</h4>
+            <p style="color:#a0c4d8;line-height:1.9;font-size:1.04rem;"><strong style="color:#e0f7fa;">TechGroup</strong> adalah kelompok riset dan pengembangan teknologi yang terdiri dari 5 individu berbakat dengan keahlian beragam. Kami berkolaborasi untuk merancang, membangun, dan menghadirkan solusi digital berkualitas tinggi.</p>
+            <p style="color:#a0c4d8;line-height:1.9;font-size:1.04rem;margin-top:1rem;">Didirikan dengan semangat inovasi, kami menggabungkan ilmu komputer, desain, dan rekayasa perangkat lunak untuk menjawab tantangan masa depan.</p>
+            <div class="tech-icon-grid">
+              <span class="tech-badge">PYTHON</span><span class="tech-badge">REACT</span><span class="tech-badge">NODE.JS</span>
+              <span class="tech-badge">AI / ML</span><span class="tech-badge">UI/UX</span><span class="tech-badge">CLOUD</span>
+              <span class="tech-badge">FLUTTER</span><span class="tech-badge">DOCKER</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 reveal" style="transition-delay:.15s">
+          <div class="about-card">
+            <h4 style="font-family:'Orbitron',monospace;color:var(--neon-purple);margin-bottom:1rem;"><i class="bi bi-eye me-2"></i>Visi &amp; Misi</h4>
+            <div class="vision-box">
+              <h6 style="font-family:'Orbitron',monospace;color:#e0f7fa;font-size:.82rem;letter-spacing:2px;">◈ VISI</h6>
+              <p style="color:#a0c4d8;margin-top:.5rem;line-height:1.7;">Menjadi kelompok teknologi terdepan yang mendorong transformasi digital dan menciptakan dampak positif bagi masyarakat melalui inovasi berkelanjutan.</p>
+            </div>
+            <div class="vision-box mt-3" style="background:rgba(0,245,255,.05);border-color:rgba(0,245,255,.2);">
+              <h6 style="font-family:'Orbitron',monospace;color:#e0f7fa;font-size:.82rem;letter-spacing:2px;">◈ MISI</h6>
+              <ul style="color:#a0c4d8;margin-top:.5rem;padding-left:1.2rem;line-height:2.1;">
+                <li>Mengembangkan solusi teknologi yang relevan dan berdampak</li>
+                <li>Membangun budaya kolaborasi dan pembelajaran berkelanjutan</li>
+                <li>Menerapkan standar kode dan desain berkualitas tinggi</li>
+                <li>Berkontribusi aktif pada komunitas open-source</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMBERS -->
+  <section id="members">
+    <div class="container">
+      <div class="text-center reveal">
+        <p class="section-sub">◈ TIM KAMI ◈</p>
+        <h2 class="section-heading">Anggota Kelompok</h2>
+        <div class="divider-line"></div>
+        <p style="color:#4a7a8e;max-width:580px;margin:0 auto 3rem;">Klik pada kartu anggota untuk melihat portofolio lengkap mereka.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.05s">
+          <a class="member-card mc-c" href="#" onclick="openPortfolio('p1');return false;">
+            <div class="member-avatar av-1">AZ</div>
+            <div class="member-name">Azhar Rizky</div>
+            <div class="member-role r-1">Full-Stack Developer</div>
+            <div class="d-flex flex-wrap justify-content-center gap-1">
+              <span class="skill-tag" style="background:rgba(0,245,255,.07);border:1px solid rgba(0,245,255,.3);color:#00f5ff;">React</span>
+              <span class="skill-tag" style="background:rgba(0,245,255,.07);border:1px solid rgba(0,245,255,.3);color:#00f5ff;">Node.js</span>
+              <span class="skill-tag" style="background:rgba(0,245,255,.07);border:1px solid rgba(0,245,255,.3);color:#00f5ff;">MongoDB</span>
+            </div>
+            <div class="view-portfolio-btn vp-1">VIEW PORTFOLIO →</div>
+          </a>
+        </div>
+        <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.1s">
+          <a class="member-card mc-p" href="#" onclick="openPortfolio('p2');return false;">
+            <div class="member-avatar av-2">BR</div>
+            <div class="member-name">Bintang Restu</div>
+            <div class="member-role r-2">AI / ML Engineer</div>
+            <div class="d-flex flex-wrap justify-content-center gap-1">
+              <span class="skill-tag" style="background:rgba(191,0,255,.07);border:1px solid rgba(191,0,255,.3);color:#bf00ff;">Python</span>
+              <span class="skill-tag" style="background:rgba(191,0,255,.07);border:1px solid rgba(191,0,255,.3);color:#bf00ff;">TensorFlow</span>
+              <span class="skill-tag" style="background:rgba(191,0,255,.07);border:1px solid rgba(191,0,255,.3);color:#bf00ff;">PyTorch</span>
+            </div>
+            <div class="view-portfolio-btn vp-2">VIEW PORTFOLIO →</div>
+          </a>
+        </div>
+        <div class="col-sm-6 col-lg-4 reveal" style="transition-delay:.15s">
+          <a class="member-card mc-g" href="#" onclick="openPortfolio('p3');return false;">
+            <div class="member-avatar av-3">CN</div>
+            <div class="member-name">Citra Nadya</div>
+            <div class="member-role r-3">UI/UX Designer</div>
+            <div class="d-flex flex-wrap justify-content-center gap-1">
+              <span class="skill-tag" style="background:rgba(57,255,20,.07);border:1px solid rgba(57,255,20,.3);color:#39ff14;">Figma</span>
+              <span class="skill-tag" style="background:rgba(57,255,20,.07);border:1px solid rgba(57,255,20,.3);color:#39ff14;">Tailwind</span>
+              <span class="skill-tag" style="background:rgba(57,255,20,.07);border:1px solid rgba(57,255,20,.3);color:#39ff14;">Flutter</span>
+            </div>
+            <div class="view-portfolio-btn vp-3">VIEW PORTFOLIO →</div>
+          </a>
+        </div>
+        <div class="col-sm-6 col-lg-6 reveal" style="transition-delay:.2s">
+          <a class="member-card mc-o" href="#" onclick="openPortfolio('p4');return false;">
+            <div class="member-avatar av-4">DP</div>
+            <div class="member-name">Daffa Pratama</div>
+            <div class="member-role r-4">Cloud &amp; DevOps Engineer</div>
+            <div class="d-flex flex-wrap justify-content-center gap-1">
+              <span class="skill-tag" style="background:rgba(255,107,0,.07);border:1px solid rgba(255,107,0,.3);color:#ff6b00;">AWS</span>
+              <span class="skill-tag" style="background:rgba(255,107,0,.07);border:1px solid rgba(255,107,0,.3);color:#ff6b00;">Docker</span>
+              <span class="skill-tag" style="background:rgba(255,107,0,.07);border:1px solid rgba(255,107,0,.3);color:#ff6b00;">Kubernetes</span>
+            </div>
+            <div class="view-portfolio-btn vp-4">VIEW PORTFOLIO →</div>
+          </a>
+        </div>
+        <div class="col-sm-12 col-lg-6 reveal" style="transition-delay:.25s">
+          <a class="member-card mc-r" href="#" onclick="openPortfolio('p5');return false;">
+            <div class="member-avatar av-5">EF</div>
+            <div class="member-name">Elsa Fitriani</div>
+            <div class="member-role r-5">Cybersecurity Analyst</div>
+            <div class="d-flex flex-wrap justify-content-center gap-1">
+              <span class="skill-tag" style="background:rgba(255,0,90,.07);border:1px solid rgba(255,0,90,.3);color:#ff005a;">Pentest</span>
+              <span class="skill-tag" style="background:rgba(255,0,90,.07);border:1px solid rgba(255,0,90,.3);color:#ff005a;">Kali Linux</span>
+              <span class="skill-tag" style="background:rgba(255,0,90,.07);border:1px solid rgba(255,0,90,.3);color:#ff005a;">CTF</span>
+            </div>
+            <div class="view-portfolio-btn vp-5">VIEW PORTFOLIO →</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <div class="text-center reveal">
+        <p class="section-sub">◈ HUBUNGI KAMI ◈</p>
+        <h2 class="section-heading">Kontak</h2>
+        <div class="divider-line"></div>
+      </div>
+      <div class="row justify-content-center reveal">
+        <div class="col-lg-8">
+          <div class="contact-card">
+            <i class="bi bi-envelope-open" style="font-size:3rem;color:var(--neon-cyan);margin-bottom:1.5rem;display:block;"></i>
+            <h4 style="font-family:'Orbitron',monospace;color:#e0f7fa;margin-bottom:.5rem;">Tertarik Berkolaborasi?</h4>
+            <p style="color:#4a7a8e;margin-bottom:2rem;">Hubungi kami untuk proyek, kolaborasi, atau sekadar diskusi teknologi.</p>
+            <a href="/cdn-cgi/l/email-protection#473322242f203528323707223f262a372b226924282a" class="btn-cyber"><i class="bi bi-send me-2"></i><span class="__cf_email__" data-cfemail="cfbbaaaca7a8bda0babf8faab7aea2bfa3aae1aca0a2">[email&#160;protected]</span></a>
+            <div class="mt-4">
+              <a href="#" class="social-link"><i class="bi bi-github"></i></a>
+              <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
+              <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 TECHGROUP — ALL SYSTEMS OPERATIONAL &nbsp;|&nbsp; BUILT WITH <i class="bi bi-heart-fill" style="color:var(--neon-purple);"></i> BY TECHGROUP</p>
+  </footer>
+</div><!-- /#main-site -->
+
+
+<!-- ═══════════ PORTFOLIO PAGES ═══════════ -->
+
+<!-- P1: Azhar Rizky -->
+<div class="portfolio-page" id="p1">
+  <button class="back-btn" onclick="closePortfolio()">← KEMBALI</button>
+  <div class="container">
+    <div class="portfolio-header">
+      <div class="big-av av-1" style="border:3px solid #00f5ff;box-shadow:0 0 40px rgba(0,245,255,.35);">AZ</div>
+      <h2 class="section-heading">Azhar Rizky</h2>
+      <p class="section-sub r-1">Full-Stack Developer</p>
+      <p style="color:#7eb8cc;max-width:580px;margin:1rem auto 0;line-height:1.8;">Passionate developer dengan 3+ tahun pengalaman membangun aplikasi web modern. Spesialis dalam ekosistem JavaScript dan arsitektur microservices.</p>
+      <div class="tech-icon-grid justify-content-center mt-3">
+        <span class="tech-badge">React</span><span class="tech-badge">Node.js</span><span class="tech-badge">MongoDB</span>
+        <span class="tech-badge">GraphQL</span><span class="tech-badge">TypeScript</span><span class="tech-badge">Redux</span>
+      </div>
+    </div>
+    <div class="row g-4 py-5">
+      <div class="col-lg-7">
+        <h4 style="font-family:'Orbitron',monospace;color:var(--neon-cyan);margin-bottom:1.4rem;">◈ PROYEK UNGGULAN</h4>
+        <div class="project-card">
+          <div class="project-title"><i class="bi bi-box me-2" style="color:#00f5ff;"></i>E-Commerce Platform</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Platform belanja online full-stack dengan fitur real-time inventory dan payment gateway terintegrasi.</p>
+          <div class="mt-2"><span class="tech-badge" style="font-size:.62rem;">React</span> <span class="tech-badge" style="font-size:.62rem;">Node.js</span> <span class="tech-badge" style="font-size:.62rem;">Stripe</span></div>
+        </div>
+        <div class="project-card">
+          <div class="project-title"><i class="bi bi-chat-dots me-2" style="color:#00f5ff;"></i>Real-Time Chat App</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Aplikasi pesan instan dengan WebSocket, enkripsi end-to-end, dan fitur grup.</p>
+          <div class="mt-2"><span class="tech-badge" style="font-size:.62rem;">Socket.io</span> <span class="tech-badge" style="font-size:.62rem;">MongoDB</span> <span class="tech-badge" style="font-size:.62rem;">JWT</span></div>
+        </div>
+        <div class="project-card">
+          <div class="project-title"><i class="bi bi-bar-chart me-2" style="color:#00f5ff;"></i>Analytics Dashboard</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Dashboard analitik bisnis dengan visualisasi data interaktif dan laporan otomatis.</p>
+          <div class="mt-2"><span class="tech-badge" style="font-size:.62rem;">D3.js</span> <span class="tech-badge" style="font-size:.62rem;">GraphQL</span> <span class="tech-badge" style="font-size:.62rem;">PostgreSQL</span></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <h4 style="font-family:'Orbitron',monospace;color:var(--neon-cyan);margin-bottom:1.4rem;">◈ SKILL LEVEL</h4>
+        <div class="about-card">
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>React / Next.js</span><span>95%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:95%;background:linear-gradient(90deg,#00f5ff,#0088ff);box-shadow:0 0 8px #00f5ff;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Node.js / Express</span><span>90%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%;background:linear-gradient(90deg,#00f5ff,#0088ff);box-shadow:0 0 8px #00f5ff;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>MongoDB / SQL</span><span>85%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%;background:linear-gradient(90deg,#00f5ff,#0088ff);box-shadow:0 0 8px #00f5ff;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>TypeScript</span><span>88%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:88%;background:linear-gradient(90deg,#00f5ff,#0088ff);box-shadow:0 0 8px #00f5ff;"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- P2: Bintang Restu -->
+<div class="portfolio-page" id="p2">
+  <button class="back-btn" onclick="closePortfolio()" style="border-color:#bf00ff;color:#bf00ff;">← KEMBALI</button>
+  <div class="container">
+    <div class="portfolio-header">
+      <div class="big-av av-2" style="border:3px solid #bf00ff;box-shadow:0 0 40px rgba(191,0,255,.35);">BR</div>
+      <h2 class="section-heading">Bintang Restu</h2>
+      <p class="section-sub r-2">AI / ML Engineer</p>
+      <p style="color:#7eb8cc;max-width:580px;margin:1rem auto 0;line-height:1.8;">Peneliti AI dengan fokus pada computer vision dan NLP. Pengalaman dalam deployment model di skala produksi dan penelitian mutakhir.</p>
+      <div class="tech-icon-grid justify-content-center mt-3">
+        <span class="tech-badge" style="border-color:rgba(191,0,255,.4);color:#bf00ff;">Python</span>
+        <span class="tech-badge" style="border-color:rgba(191,0,255,.4);color:#bf00ff;">TensorFlow</span>
+        <span class="tech-badge" style="border-color:rgba(191,0,255,.4);color:#bf00ff;">PyTorch</span>
+        <span class="tech-badge" style="border-color:rgba(191,0,255,.4);color:#bf00ff;">scikit-learn</span>
+        <span class="tech-badge" style="border-color:rgba(191,0,255,.4);color:#bf00ff;">OpenCV</span>
+        <span class="tech-badge" style="border-color:rgba(191,0,255,.4);color:#bf00ff;">Hugging Face</span>
+      </div>
+    </div>
+    <div class="row g-4 py-5">
+      <div class="col-lg-7">
+        <h4 style="font-family:'Orbitron',monospace;color:#bf00ff;margin-bottom:1.4rem;">◈ PROYEK UNGGULAN</h4>
+        <div class="project-card" style="border-color:rgba(191,0,255,.13);">
+          <div class="project-title"><i class="bi bi-camera me-2" style="color:#bf00ff;"></i>Face Recognition System</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Sistem pengenalan wajah real-time dengan akurasi 99.2% menggunakan deep learning CNN.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(191,0,255,.3);color:#bf00ff;font-size:.62rem;">OpenCV</span> <span class="tech-badge" style="border-color:rgba(191,0,255,.3);color:#bf00ff;font-size:.62rem;">PyTorch</span></div>
+        </div>
+        <div class="project-card" style="border-color:rgba(191,0,255,.13);">
+          <div class="project-title"><i class="bi bi-chat-square-text me-2" style="color:#bf00ff;"></i>NLP Sentiment Analyzer</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Analisis sentimen teks bahasa Indonesia menggunakan transformer BERT yang di-fine-tune.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(191,0,255,.3);color:#bf00ff;font-size:.62rem;">BERT</span> <span class="tech-badge" style="border-color:rgba(191,0,255,.3);color:#bf00ff;font-size:.62rem;">Hugging Face</span></div>
+        </div>
+        <div class="project-card" style="border-color:rgba(191,0,255,.13);">
+          <div class="project-title"><i class="bi bi-robot me-2" style="color:#bf00ff;"></i>Predictive Analytics Engine</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Mesin prediksi bisnis dengan ensemble model, digunakan oleh 3 perusahaan startup.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(191,0,255,.3);color:#bf00ff;font-size:.62rem;">XGBoost</span> <span class="tech-badge" style="border-color:rgba(191,0,255,.3);color:#bf00ff;font-size:.62rem;">FastAPI</span></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <h4 style="font-family:'Orbitron',monospace;color:#bf00ff;margin-bottom:1.4rem;">◈ SKILL LEVEL</h4>
+        <div class="about-card" style="border-color:rgba(191,0,255,.2);">
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Python / ML</span><span>97%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:97%;background:linear-gradient(90deg,#bf00ff,#8000ff);box-shadow:0 0 8px #bf00ff;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Deep Learning</span><span>92%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:92%;background:linear-gradient(90deg,#bf00ff,#8000ff);box-shadow:0 0 8px #bf00ff;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Computer Vision</span><span>88%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:88%;background:linear-gradient(90deg,#bf00ff,#8000ff);box-shadow:0 0 8px #bf00ff;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>NLP / LLM</span><span>85%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%;background:linear-gradient(90deg,#bf00ff,#8000ff);box-shadow:0 0 8px #bf00ff;"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- P3: Citra Nadya -->
+<div class="portfolio-page" id="p3">
+  <button class="back-btn" onclick="closePortfolio()" style="border-color:#39ff14;color:#39ff14;">← KEMBALI</button>
+  <div class="container">
+    <div class="portfolio-header">
+      <div class="big-av av-3" style="border:3px solid #39ff14;box-shadow:0 0 40px rgba(57,255,20,.35);">CN</div>
+      <h2 class="section-heading">Citra Nadya</h2>
+      <p class="section-sub r-3">UI/UX Designer</p>
+      <p style="color:#7eb8cc;max-width:580px;margin:1rem auto 0;line-height:1.8;">Designer berpengalaman yang menggabungkan estetika dengan fungsionalitas. Fokus pada user-centered design dan aksesibilitas digital.</p>
+      <div class="tech-icon-grid justify-content-center mt-3">
+        <span class="tech-badge" style="border-color:rgba(57,255,20,.4);color:#39ff14;">Figma</span>
+        <span class="tech-badge" style="border-color:rgba(57,255,20,.4);color:#39ff14;">Adobe XD</span>
+        <span class="tech-badge" style="border-color:rgba(57,255,20,.4);color:#39ff14;">Tailwind</span>
+        <span class="tech-badge" style="border-color:rgba(57,255,20,.4);color:#39ff14;">Flutter</span>
+        <span class="tech-badge" style="border-color:rgba(57,255,20,.4);color:#39ff14;">Framer</span>
+        <span class="tech-badge" style="border-color:rgba(57,255,20,.4);color:#39ff14;">Prototyping</span>
+      </div>
+    </div>
+    <div class="row g-4 py-5">
+      <div class="col-lg-7">
+        <h4 style="font-family:'Orbitron',monospace;color:#39ff14;margin-bottom:1.4rem;">◈ PROYEK UNGGULAN</h4>
+        <div class="project-card" style="border-color:rgba(57,255,20,.13);">
+          <div class="project-title"><i class="bi bi-phone me-2" style="color:#39ff14;"></i>HealthTrack Mobile App</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Desain UI/UX aplikasi kesehatan dengan onboarding flow intuitif, rating pengguna 4.9/5.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(57,255,20,.3);color:#39ff14;font-size:.62rem;">Figma</span> <span class="tech-badge" style="border-color:rgba(57,255,20,.3);color:#39ff14;font-size:.62rem;">Flutter</span></div>
+        </div>
+        <div class="project-card" style="border-color:rgba(57,255,20,.13);">
+          <div class="project-title"><i class="bi bi-grid me-2" style="color:#39ff14;"></i>Futuristic Design System</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Design system komprehensif dengan 200+ komponen siap pakai untuk tim pengembang.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(57,255,20,.3);color:#39ff14;font-size:.62rem;">Figma</span> <span class="tech-badge" style="border-color:rgba(57,255,20,.3);color:#39ff14;font-size:.62rem;">Storybook</span></div>
+        </div>
+        <div class="project-card" style="border-color:rgba(57,255,20,.13);">
+          <div class="project-title"><i class="bi bi-shop me-2" style="color:#39ff14;"></i>Brand Identity Startup</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Identitas visual lengkap untuk 5 startup teknologi termasuk logo, guideline, dan aset digital.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(57,255,20,.3);color:#39ff14;font-size:.62rem;">Illustrator</span> <span class="tech-badge" style="border-color:rgba(57,255,20,.3);color:#39ff14;font-size:.62rem;">Photoshop</span></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <h4 style="font-family:'Orbitron',monospace;color:#39ff14;margin-bottom:1.4rem;">◈ SKILL LEVEL</h4>
+        <div class="about-card" style="border-color:rgba(57,255,20,.2);">
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Figma / Prototyping</span><span>98%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:98%;background:linear-gradient(90deg,#39ff14,#00aa00);box-shadow:0 0 8px #39ff14;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>User Research</span><span>90%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%;background:linear-gradient(90deg,#39ff14,#00aa00);box-shadow:0 0 8px #39ff14;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>CSS / Tailwind</span><span>85%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%;background:linear-gradient(90deg,#39ff14,#00aa00);box-shadow:0 0 8px #39ff14;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Motion Design</span><span>80%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%;background:linear-gradient(90deg,#39ff14,#00aa00);box-shadow:0 0 8px #39ff14;"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- P4: Daffa Pratama -->
+<div class="portfolio-page" id="p4">
+  <button class="back-btn" onclick="closePortfolio()" style="border-color:#ff6b00;color:#ff6b00;">← KEMBALI</button>
+  <div class="container">
+    <div class="portfolio-header">
+      <div class="big-av av-4" style="border:3px solid #ff6b00;box-shadow:0 0 40px rgba(255,107,0,.35);">DP</div>
+      <h2 class="section-heading">Daffa Pratama</h2>
+      <p class="section-sub r-4">Cloud &amp; DevOps Engineer</p>
+      <p style="color:#7eb8cc;max-width:580px;margin:1rem auto 0;line-height:1.8;">Arsitek cloud berpengalaman dalam merancang infrastruktur scalable dan pipeline CI/CD yang memungkinkan deployment cepat dan andal.</p>
+      <div class="tech-icon-grid justify-content-center mt-3">
+        <span class="tech-badge" style="border-color:rgba(255,107,0,.4);color:#ff6b00;">AWS</span>
+        <span class="tech-badge" style="border-color:rgba(255,107,0,.4);color:#ff6b00;">GCP</span>
+        <span class="tech-badge" style="border-color:rgba(255,107,0,.4);color:#ff6b00;">Docker</span>
+        <span class="tech-badge" style="border-color:rgba(255,107,0,.4);color:#ff6b00;">Kubernetes</span>
+        <span class="tech-badge" style="border-color:rgba(255,107,0,.4);color:#ff6b00;">Terraform</span>
+        <span class="tech-badge" style="border-color:rgba(255,107,0,.4);color:#ff6b00;">Jenkins</span>
+      </div>
+    </div>
+    <div class="row g-4 py-5">
+      <div class="col-lg-7">
+        <h4 style="font-family:'Orbitron',monospace;color:#ff6b00;margin-bottom:1.4rem;">◈ PROYEK UNGGULAN</h4>
+        <div class="project-card" style="border-color:rgba(255,107,0,.13);">
+          <div class="project-title"><i class="bi bi-cloud me-2" style="color:#ff6b00;"></i>Microservices K8s Cluster</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Orkestrasi 30+ microservices di Kubernetes dengan auto-scaling dan zero-downtime deployment.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(255,107,0,.3);color:#ff6b00;font-size:.62rem;">K8s</span> <span class="tech-badge" style="border-color:rgba(255,107,0,.3);color:#ff6b00;font-size:.62rem;">Helm</span> <span class="tech-badge" style="border-color:rgba(255,107,0,.3);color:#ff6b00;font-size:.62rem;">Istio</span></div>
+        </div>
+        <div class="project-card" style="border-color:rgba(255,107,0,.13);">
+          <div class="project-title"><i class="bi bi-gear me-2" style="color:#ff6b00;"></i>CI/CD Pipeline Automation</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Pipeline otomatis dari commit ke production dalam 8 menit dengan coverage testing penuh.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(255,107,0,.3);color:#ff6b00;font-size:.62rem;">GitHub Actions</span> <span class="tech-badge" style="border-color:rgba(255,107,0,.3);color:#ff6b00;font-size:.62rem;">ArgoCD</span></div>
+        </div>
+        <div class="project-card" style="border-color:rgba(255,107,0,.13);">
+          <div class="project-title"><i class="bi bi-hdd-network me-2" style="color:#ff6b00;"></i>Infrastructure as Code</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Infrastruktur lengkap multi-region AWS dengan Terraform untuk 3 produk startup teknologi.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(255,107,0,.3);color:#ff6b00;font-size:.62rem;">Terraform</span> <span class="tech-badge" style="border-color:rgba(255,107,0,.3);color:#ff6b00;font-size:.62rem;">Ansible</span></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <h4 style="font-family:'Orbitron',monospace;color:#ff6b00;margin-bottom:1.4rem;">◈ SKILL LEVEL</h4>
+        <div class="about-card" style="border-color:rgba(255,107,0,.2);">
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>AWS / GCP</span><span>93%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:93%;background:linear-gradient(90deg,#ff6b00,#ff3300);box-shadow:0 0 8px #ff6b00;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Kubernetes</span><span>90%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%;background:linear-gradient(90deg,#ff6b00,#ff3300);box-shadow:0 0 8px #ff6b00;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Docker</span><span>95%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:95%;background:linear-gradient(90deg,#ff6b00,#ff3300);box-shadow:0 0 8px #ff6b00;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Terraform / IaC</span><span>87%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:87%;background:linear-gradient(90deg,#ff6b00,#ff3300);box-shadow:0 0 8px #ff6b00;"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- P5: Elsa Fitriani -->
+<div class="portfolio-page" id="p5">
+  <button class="back-btn" onclick="closePortfolio()" style="border-color:#ff005a;color:#ff005a;">← KEMBALI</button>
+  <div class="container">
+    <div class="portfolio-header">
+      <div class="big-av av-5" style="border:3px solid #ff005a;box-shadow:0 0 40px rgba(255,0,90,.35);">EF</div>
+      <h2 class="section-heading">Elsa Fitriani</h2>
+      <p class="section-sub r-5">Cybersecurity Analyst</p>
+      <p style="color:#7eb8cc;max-width:580px;margin:1rem auto 0;line-height:1.8;">Ethical hacker dan analis keamanan siber bersertifikat. Spesialis dalam penetration testing, vulnerability assessment, dan incident response.</p>
+      <div class="tech-icon-grid justify-content-center mt-3">
+        <span class="tech-badge" style="border-color:rgba(255,0,90,.4);color:#ff005a;">Kali Linux</span>
+        <span class="tech-badge" style="border-color:rgba(255,0,90,.4);color:#ff005a;">Metasploit</span>
+        <span class="tech-badge" style="border-color:rgba(255,0,90,.4);color:#ff005a;">Wireshark</span>
+        <span class="tech-badge" style="border-color:rgba(255,0,90,.4);color:#ff005a;">Burp Suite</span>
+        <span class="tech-badge" style="border-color:rgba(255,0,90,.4);color:#ff005a;">OSINT</span>
+        <span class="tech-badge" style="border-color:rgba(255,0,90,.4);color:#ff005a;">CTF</span>
+      </div>
+    </div>
+    <div class="row g-4 py-5">
+      <div class="col-lg-7">
+        <h4 style="font-family:'Orbitron',monospace;color:#ff005a;margin-bottom:1.4rem;">◈ PROYEK UNGGULAN</h4>
+        <div class="project-card" style="border-color:rgba(255,0,90,.13);">
+          <div class="project-title"><i class="bi bi-shield-exclamation me-2" style="color:#ff005a;"></i>Web Application Pentest</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Penetration testing komprehensif untuk 10+ web app klien, menemukan dan melaporkan 50+ vulnerabilitas kritis.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(255,0,90,.3);color:#ff005a;font-size:.62rem;">Burp Suite</span> <span class="tech-badge" style="border-color:rgba(255,0,90,.3);color:#ff005a;font-size:.62rem;">OWASP Top 10</span></div>
+        </div>
+        <div class="project-card" style="border-color:rgba(255,0,90,.13);">
+          <div class="project-title"><i class="bi bi-trophy me-2" style="color:#ff005a;"></i>CTF Competition Winner</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Juara 1 kompetisi CTF nasional kategori forensik digital dan reverse engineering.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(255,0,90,.3);color:#ff005a;font-size:.62rem;">Forensics</span> <span class="tech-badge" style="border-color:rgba(255,0,90,.3);color:#ff005a;font-size:.62rem;">Rev Engineering</span></div>
+        </div>
+        <div class="project-card" style="border-color:rgba(255,0,90,.13);">
+          <div class="project-title"><i class="bi bi-lock me-2" style="color:#ff005a;"></i>Security Awareness Training</div>
+          <p style="color:#7eb8cc;font-size:.9rem;margin:.5rem 0;">Program pelatihan keamanan siber untuk 200+ karyawan, mengurangi insiden phishing sebesar 70%.</p>
+          <div class="mt-2"><span class="tech-badge" style="border-color:rgba(255,0,90,.3);color:#ff005a;font-size:.62rem;">Social Eng</span> <span class="tech-badge" style="border-color:rgba(255,0,90,.3);color:#ff005a;font-size:.62rem;">Training</span></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <h4 style="font-family:'Orbitron',monospace;color:#ff005a;margin-bottom:1.4rem;">◈ SKILL LEVEL</h4>
+        <div class="about-card" style="border-color:rgba(255,0,90,.2);">
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Penetration Testing</span><span>94%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:94%;background:linear-gradient(90deg,#ff005a,#aa0033);box-shadow:0 0 8px #ff005a;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Network Security</span><span>91%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:91%;background:linear-gradient(90deg,#ff005a,#aa0033);box-shadow:0 0 8px #ff005a;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Digital Forensics</span><span>88%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:88%;background:linear-gradient(90deg,#ff005a,#aa0033);box-shadow:0 0 8px #ff005a;"></div></div></div>
+          <div class="skill-bar-wrap"><div class="skill-bar-label"><span>Malware Analysis</span><span>82%</span></div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:82%;background:linear-gradient(90deg,#ff005a,#aa0033);box-shadow:0 0 8px #ff005a;"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ── CANVAS PARTICLE NETWORK
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  class Particle {
+    constructor() { this.reset(); }
+    reset() { this.x=Math.random()*W; this.y=Math.random()*H; this.vx=(Math.random()-.5)*.5; this.vy=(Math.random()-.5)*.5; this.r=Math.random()*1.5+.5; this.alpha=Math.random()*.45+.08; }
+    update() { this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>W)this.vx*=-1; if(this.y<0||this.y>H)this.vy*=-1; }
+    draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle=`rgba(0,245,255,${this.alpha})`; ctx.fill(); }
+  }
+  for(let i=0;i<120;i++) particles.push(new Particle());
+  function drawLines() {
+    for(let i=0;i<particles.length;i++) for(let j=i+1;j<particles.length;j++){
+      const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<130){ ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y); ctx.strokeStyle=`rgba(0,245,255,${.12*(1-d/130)})`; ctx.lineWidth=.5; ctx.stroke(); }
+    }
+  }
+  function animate() { ctx.clearRect(0,0,W,H); particles.forEach(p=>{p.update();p.draw();}); drawLines(); requestAnimationFrame(animate); }
+  animate();
+
+  // ── STATS COUNTER
+  const statsObs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ countAll(); statsObs.disconnect(); } });
+  },{threshold:.3});
+  statsObs.observe(document.querySelector('.stats-bar'));
+  function countAll() {
+    document.querySelectorAll('[data-count]').forEach(el=>{
+      const t=parseInt(el.dataset.count); let c=0;
+      const iv=setInterval(()=>{ c=Math.min(c+Math.ceil(t/40),t); el.textContent=c+(t>9?'+':''); if(c>=t)clearInterval(iv); },40);
+    });
+  }
+
+  // ── SCROLL REVEAL
+  const revObs = new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting)e.target.classList.add('visible'); }),{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+  // ── PORTFOLIO NAVIGATION
+  function openPortfolio(id) {
+    document.getElementById('main-site').style.display='none';
+    const page=document.getElementById(id); page.classList.add('active');
+    window.scrollTo(0,0);
+  }
+  function closePortfolio() {
+    document.querySelectorAll('.portfolio-page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('main-site').style.display='block';
+    window.scrollTo(0,0);
+  }
+
+  // ── MOUSE PARALLAX ON HERO
+  document.addEventListener('mousemove', e=>{
+    const ox=(e.clientX/window.innerWidth-.5)*18;
+    const oy=(e.clientY/window.innerHeight-.5)*18;
+    const hero=document.querySelector('.hero-content');
+    if(hero) hero.style.transform=`translate(${ox*.3}px,${oy*.3}px)`;
+  });
+
+
+  // ════════════════════════════════════════════════
+  // CUSTOM CURSOR — GLOW + GLITCH
+  // ════════════════════════════════════════════════
+  const curMain    = document.getElementById('cursor-main');
+  const curRing    = document.getElementById('cursor-ring');
+  const curGlitchR = document.getElementById('cursor-glitch-r');
+  const curGlitchG = document.getElementById('cursor-glitch-g');
+
+  let mx = -200, my = -200;
+  let rx = -200, ry = -200;
+  let lastSparkTime = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    const now = Date.now();
+    if (now - lastSparkTime > 42) { spawnSpark(mx, my); lastSparkTime = now; }
+  });
+
+  // Cursor dot snaps instantly
+  function loopCursorMain() {
+    curMain.style.left = mx + 'px';
+    curMain.style.top  = my + 'px';
+    requestAnimationFrame(loopCursorMain);
+  }
+  loopCursorMain();
+
+  // Ring lags behind
+  function loopRing() {
+    rx += (mx - rx) * 0.11;
+    ry += (my - ry) * 0.11;
+    curRing.style.left = rx + 'px';
+    curRing.style.top  = ry + 'px';
+    requestAnimationFrame(loopRing);
+  }
+  loopRing();
+
+  // Glitch ghosts
+  function triggerCursorGlitch() {
+    const dur = 80 + Math.random() * 130;
+    curGlitchR.style.opacity = '0.75';
+    curGlitchR.style.left = (mx + (Math.random()-.5)*20) + 'px';
+    curGlitchR.style.top  = (my + (Math.random()-.5)*12) + 'px';
+    curGlitchG.style.opacity = '0.65';
+    curGlitchG.style.left = (mx + (Math.random()-.5)*20) + 'px';
+    curGlitchG.style.top  = (my + (Math.random()-.5)*12) + 'px';
+    setTimeout(() => { curGlitchR.style.opacity='0'; curGlitchG.style.opacity='0'; }, dur);
+  }
+  function scheduleGlitch() {
+    const delay = 700 + Math.random() * 1800;
+    setTimeout(() => {
+      triggerCursorGlitch();
+      if (Math.random() > .5) setTimeout(triggerCursorGlitch, 110);
+      scheduleGlitch();
+    }, delay);
+  }
+  scheduleGlitch();
+
+  // Spark trail
+  function spawnSpark(x, y) {
+    const s = document.createElement('div');
+    s.className = 'cursor-spark';
+    const size = 2 + Math.random() * 4;
+    const colors = ['#00f5ff','#bf00ff','#39ff14','#ffffff'];
+    const col = colors[Math.floor(Math.random()*colors.length)];
+    s.style.cssText = `left:${x+(Math.random()-.5)*18}px;top:${y+(Math.random()-.5)*18}px;width:${size}px;height:${size}px;background:${col};box-shadow:0 0 ${size*2}px ${col},0 0 ${size*4}px ${col};`;
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 570);
+  }
+
+  // Click burst
+  document.addEventListener('mousedown', () => {
+    curMain.classList.add('clicking');
+    for(let i=0;i<4;i++) setTimeout(triggerCursorGlitch, i*55);
+  });
+  document.addEventListener('mouseup', () => curMain.classList.remove('clicking'));
+
+  // Hover on links/buttons
+  const hoverSel = 'a,button,.member-card,.btn-cyber,.tech-badge,.social-link,.back-btn,.nav-link-custom,.view-portfolio-btn';
+  document.addEventListener('mouseover', e => {
+    if(e.target.closest(hoverSel)){ curMain.classList.add('on-link'); curRing.classList.add('on-link'); }
+  });
+  document.addEventListener('mouseout', e => {
+    if(e.target.closest(hoverSel)){ curMain.classList.remove('on-link'); curRing.classList.remove('on-link'); }
+  });
+
+  // ════════════════════════════════════════════════
+  // CYBER PERSPECTIVE GRID
+  // ════════════════════════════════════════════════
+  const gridCanvas = document.getElementById('grid-canvas');
+  const gctx = gridCanvas.getContext('2d');
+  let gW, gH;
+  function resizeGrid() { gW = gridCanvas.width = window.innerWidth; gH = gridCanvas.height = window.innerHeight; }
+  resizeGrid(); window.addEventListener('resize', resizeGrid);
+
+  let gridOff = 0;
+  function drawGrid() {
+    gctx.clearRect(0, 0, gW, gH);
+    gridOff = (gridOff + 0.2) % 60;
+    const vanX = gW/2, vanY = gH * 0.42;
+
+    // Vertical fanning lines
+    for(let i=-30; i<=30; i++){
+      const botX = gW/2 + i * 60 * 2.8;
+      const alpha = Math.max(0, 0.2 - Math.abs(i)*0.006);
+      gctx.beginPath(); gctx.moveTo(vanX, vanY); gctx.lineTo(botX, gH+80);
+      gctx.strokeStyle = `rgba(0,245,255,${alpha})`; gctx.lineWidth=0.7; gctx.stroke();
+    }
+
+    // Horizontal receding lines with scroll motion
+    for(let i=0; i<=24; i++){
+      const t = i/24;
+      const ease = Math.pow(t, 2.4);
+      const y = vanY + ease*(gH+80-vanY) + gridOff*ease*4;
+      if(y > gH+10) continue;
+      gctx.beginPath(); gctx.moveTo(0,y); gctx.lineTo(gW,y);
+      gctx.strokeStyle = `rgba(0,245,255,${ease*0.25})`; gctx.lineWidth=0.6; gctx.stroke();
+    }
+
+    // Purple upper accent lines
+    for(let i=-12; i<=12; i++){
+      const botX = gW/2 + i*60*1.4;
+      const alpha = Math.max(0, 0.07 - Math.abs(i)*0.005);
+      gctx.beginPath(); gctx.moveTo(vanX,0); gctx.lineTo(botX, vanY);
+      gctx.strokeStyle = `rgba(191,0,255,${alpha})`; gctx.lineWidth=0.5; gctx.stroke();
+    }
+    requestAnimationFrame(drawGrid);
+  }
+  drawGrid();
+
+  // ════════════════════════════════════════════════
+  // DATA RAIN (Matrix-lite)
+  // ════════════════════════════════════════════════
+  const rainCanvas = document.getElementById('rain-canvas');
+  const rctx = rainCanvas.getContext('2d');
+  let rW, rH;
+  function resizeRain() { rW = rainCanvas.width = window.innerWidth; rH = rainCanvas.height = window.innerHeight; }
+  resizeRain(); window.addEventListener('resize', resizeRain);
+
+  const RAIN_CHARS = 'アイウエオカキクケコサシスセソ01100101TECHGROUP#@!%';
+  const FS = 13;
+  const rainCols = Math.floor(window.innerWidth / FS);
+  const drops = Array.from({length: rainCols}, () => Math.random() * -80);
+
+  function drawRain() {
+    rctx.fillStyle = 'rgba(2,11,24,0.2)';
+    rctx.fillRect(0,0,rW,rH);
+    rctx.font = FS + 'px monospace';
+    for(let i=0; i<drops.length; i++){
+      const ch = RAIN_CHARS[Math.floor(Math.random()*RAIN_CHARS.length)];
+      const x = i*FS, y = drops[i]*FS;
+      rctx.fillStyle = drops[i] > 1 ? '#00f5ff' : '#fff';
+      rctx.fillText(ch, x, y);
+      if(y > rH && Math.random() > 0.974) drops[i] = 0;
+      drops[i] += 0.48;
+    }
+    setTimeout(drawRain, 50);
+  }
+  drawRain();
+
+  // ── SMOOTH SCROLL
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      const t=document.querySelector(a.getAttribute('href'));
+      if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth',block:'start'}); }
+      const nav=document.getElementById('navMenu');
+      if(nav.classList.contains('show')) bootstrap.Collapse.getInstance(nav)?.hide();
+    });
+  });
+</script>
+</body>
+</html>
